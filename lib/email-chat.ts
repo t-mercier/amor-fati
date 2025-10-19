@@ -2,6 +2,7 @@ import { Resend } from "resend";
 
 export async function sendChatEmail(data: {
   answers: {
+    role: "student" | "leader";
     q1: string;
     q2: string;
     q3: number;

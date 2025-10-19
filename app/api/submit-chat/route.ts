@@ -18,6 +18,8 @@ export async function POST(req: Request) {
     const a = body.answers ?? {};
     if (
       !a ||
+      !a.role ||
+      (a.role !== "student" && a.role !== "leader") ||
       !a.q1 ||
       !a.q2 ||
       !a.q3 ||
@@ -43,6 +45,7 @@ export async function POST(req: Request) {
 
     await sendChatEmail({
       answers: {
+        role: a.role as "student" | "leader",
         q1: String(a.q1),
         q2: String(a.q2),
         q3: q3n,

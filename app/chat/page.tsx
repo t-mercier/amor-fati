@@ -104,7 +104,14 @@ export default function ChatPage() {
 
     // Parse value based on field type
     let parsedValue: any = value;
-    if (step.field === "q3") {
+    if (step.field === "role") {
+      const normalized = value.toLowerCase().trim();
+      if (normalized !== "student" && normalized !== "leader") {
+        setSubmitError("Please type 'student' or 'leader'");
+        return;
+      }
+      parsedValue = normalized as "student" | "leader";
+    } else if (step.field === "q3") {
       parsedValue = parseInt(value, 10);
       if (isNaN(parsedValue) || parsedValue < 1 || parsedValue > 5) {
         setSubmitError("Please enter a number from 1 to 5");
@@ -397,6 +404,7 @@ export default function ChatPage() {
 
 function getFieldLabel(field: keyof Answer): string {
   const labels: Record<keyof Answer, string> = {
+    role: "Role at Codam",
     q1: "First moment or feeling",
     q2: "Connection or story that stuck",
     q3: "Comfort rating (1-5)",

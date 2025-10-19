@@ -1,5 +1,6 @@
 export type StepId =
   | "intro"
+  | "role_select"
   | "q1" | "q2"
   | "q3" | "q3_comment"
   | "q4" | "q5" | "q6"
@@ -9,6 +10,7 @@ export type StepId =
   | "done";
 
 export type Answer = {
+  role?: "student" | "leader";
   q1?: string;
   q2?: string;
   q3?: number; // 1..5
@@ -38,6 +40,18 @@ export const steps: Step[] = [
 This is a light chat to look back on the dinner, what you felt, what you noticed, what you'd love for the future.
 Take your time; there's no right or wrong answer. Ready?`,
     waitForContinue: true,
+  },
+  {
+    id: "role_select",
+    role: "bot",
+    text: "First, are you a student or a leader at Codam?",
+  },
+  {
+    id: "role_select",
+    role: "user",
+    required: true,
+    field: "role",
+    helper: "Type 'student' or 'leader'",
   },
   {
     id: "q1",
@@ -136,6 +150,7 @@ export function getTotalRequiredSteps(): number {
 // Helper to count answered required questions
 export function getAnsweredRequiredCount(answers: Answer): number {
   let count = 0;
+  if (answers.role) count++;
   if (answers.q1) count++;
   if (answers.q2) count++;
   if (answers.q3) count++;
@@ -152,6 +167,8 @@ export function validateAnswers(answers: Answer): {
 } {
   const errors: string[] = [];
 
+  if (!answers.role || (answers.role !== "student" && answers.role !== "leader"))
+    errors.push("Role selection is required");
   if (!answers.q1 || answers.q1.trim().length === 0)
     errors.push("Q1 is required");
   if (!answers.q2 || answers.q2.trim().length === 0)
