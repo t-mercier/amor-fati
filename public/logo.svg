@@ -1,0 +1,8 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <text x="10" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="bold" fill="#2A2A2A">
+    Amor Fati
+  </text>
+  <circle cx="180" cy="30" r="15" fill="#FAD0E5" opacity="0.6"/>
+  <circle cx="165" cy="30" r="12" fill="#E6D7FF" opacity="0.6"/>
+</svg>
+

@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply text-af-ink;
+  }
+  
+  body {
+    @apply bg-white;
+  }
+
+  /* Better focus states for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-af-lilac;
+  }
+}
+
+@layer components {
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-af-lilac/10;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-af-lilac/40 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-af-lilac/60;
+  }
+}
+
