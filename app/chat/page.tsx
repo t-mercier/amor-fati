@@ -332,13 +332,15 @@ export default function ChatPage() {
                 </div>
               )}
 
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="mt-6 w-full px-6 py-4 bg-gradient-to-r from-af-pink to-af-lilac text-af-ink font-bold rounded-xl shadow-lg hover:shadow-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? "Sending..." : "Submit ✨"}
-              </button>
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className="px-6 py-4 bg-gradient-to-r from-af-pink to-af-lilac text-af-ink font-bold rounded-xl shadow-lg hover:shadow-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Sending..." : "Submit ✨"}
+                </button>
+              </div>
             </div>
           )}
 
