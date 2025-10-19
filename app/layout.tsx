@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Amor Fati — Codam Sisterhood",
+  title: "Amor Fati Chatbox",
   description: "Share your thoughts about the Amor Fati dinner",
 };
 
