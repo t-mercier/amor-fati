@@ -35,7 +35,7 @@ export const steps: Step[] = [
     role: "bot",
     text: `Hi! I'm your Amor Fati companion 🌷
 
-This is a light chat to look back on the dinner — what you felt, what you noticed, what you'd love for the future.
+This is a light chat to look back on the dinner, what you felt, what you noticed, what you'd love for the future.
 Take your time; there's no right or wrong answer. Ready?`,
     waitForContinue: true,
   },
@@ -49,14 +49,14 @@ Take your time; there's no right or wrong answer. Ready?`,
   {
     id: "q2",
     role: "bot",
-    text: "Was there someone or something that really stuck with you — maybe a conversation, a vibe, or a story that left a mark?",
+    text: "Was there someone or something that really stuck with you, maybe a conversation, a vibe, or a story that left a mark?",
   },
   { id: "q2", role: "user", required: true, field: "q2" },
 
   {
     id: "q3",
     role: "bot",
-    text: "How did you feel in the space — the energy, the atmosphere, the people?\n\nIf you had to rate how comfortable you felt, from 1 (not really) to 5 (completely at ease), what would you say?",
+    text: "How did you feel in the space, the energy, the atmosphere, the people?\n\nIf you had to rate how comfortable you felt, from 1 (not really) to 5 (completely at ease), what would you say?",
   },
   {
     id: "q3",
@@ -83,14 +83,14 @@ Take your time; there's no right or wrong answer. Ready?`,
   {
     id: "q5",
     role: "bot",
-    text: "If we organize another Amor Fati gathering, what kind of experience would you love next?\n\n(Could be another dinner, a workshop, a walk, something creative — anything you'd enjoy!)",
+    text: "If we organize another Amor Fati gathering, what kind of experience would you love next?\n\n(Could be another dinner, a workshop, a walk, something creative, anything you'd enjoy!)",
   },
   { id: "q5", role: "user", required: true, field: "q5" },
 
   {
     id: "q6",
     role: "bot",
-    text: "Before we close, is there anything else you'd like to share — a wish, an idea, or just a last feeling about the evening?",
+    text: "Before we close, is there anything else you'd like to share, a wish, an idea, or just a last feeling about the evening?",
   },
   { id: "q6", role: "user", field: "q6" },
 

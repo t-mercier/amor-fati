@@ -54,7 +54,7 @@ export async function sendChatEmail(data: {
   return resend.emails.send({
     from,
     to,
-    subject: "Amor Fati — new chat submission",
+    subject: "Amor Fati, new chat submission",
     html,
     text,
   });
