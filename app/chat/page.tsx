@@ -363,7 +363,14 @@ export default function ChatPage() {
         )}
 
         {/* Continue button for bot messages that wait for continue */}
-        {currentStep && currentStep.role === "bot" && currentStep.waitForContinue && !isTyping && !isSubmitting && (
+        {currentStep && 
+         currentStep.role === "bot" && 
+         currentStep.waitForContinue && 
+         !isTyping && 
+         !isSubmitting && 
+         transcript.length > 0 && // Only show after at least one message is in transcript
+         transcript[transcript.length - 1]?.step === currentStep.id && // Only show if the last message is from this step
+         (
           <div className="border-t border-af-lilac/20 bg-white/80 backdrop-blur-sm p-4">
             <div className="flex justify-end">
               <button
