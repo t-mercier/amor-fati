@@ -395,17 +395,13 @@ export default function ChatPage() {
 
 function getFieldLabel(field: keyof Answer): string {
   const labels: Record<keyof Answer, string> = {
-    q1: "What did this dinner bring you?",
-    q2: "A conversation or encounter that resonated?",
-    q3: "How did you feel in the space? (1-5)",
-    q3_comment: "Why you rated it that way",
-    q4: "Did this gathering shift something?",
-    q5: "What would you love next time?",
-    q6: "What should we keep?",
-    q7: "What could we improve?",
-    q8: "Other thoughts or ideas",
-    q9: "Anything else to add?",
-    q9_name_contact: "Your name/contact (optional)",
+    q1: "First moment or feeling",
+    q2: "Connection or story that stuck",
+    q3: "Comfort rating (1-5)",
+    q3_comment: "What made you feel that way",
+    q4: "Did the evening change anything?",
+    q5: "What would you love for next time?",
+    q6: "Final thoughts",
     consent: "Consent to use your answers",
   };
   return labels[field] || field;

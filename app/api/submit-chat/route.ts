@@ -23,9 +23,6 @@ export async function POST(req: Request) {
       !a.q3 ||
       !a.q4 ||
       !a.q5 ||
-      !a.q6 ||
-      !a.q7 ||
-      !a.q8 ||
       a.consent !== true
     ) {
       return NextResponse.json(
@@ -52,11 +49,7 @@ export async function POST(req: Request) {
         q3_comment: a.q3_comment ? String(a.q3_comment) : "",
         q4: String(a.q4),
         q5: String(a.q5),
-        q6: String(a.q6),
-        q7: String(a.q7),
-        q8: String(a.q8),
-        q9: a.q9 ? String(a.q9) : "",
-        q9_name_contact: a.q9_name_contact ? String(a.q9_name_contact) : "",
+        q6: a.q6 ? String(a.q6) : "",
         consent: true,
       },
       transcript: transcript.map((m: any) => ({
