@@ -44,7 +44,7 @@ Take your time; there's no right or wrong answer. Ready?`,
   {
     id: "role_select",
     role: "bot",
-    text: "First, are you a student or a leader at Codam?",
+    text: "First, are you a student or a leader?",
   },
   {
     id: "role_select",

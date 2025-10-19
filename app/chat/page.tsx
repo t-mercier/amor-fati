@@ -318,7 +318,11 @@ export default function ChatPage() {
                             ? value
                               ? "Yes"
                               : "No"
-                            : String(value)}
+                            : field === "role"
+                              ? value === "student" 
+                                ? "🎓 Student" 
+                                : "✨ Leader"
+                              : String(value)}
                         </p>
                       </div>
                       <button
@@ -354,22 +358,43 @@ export default function ChatPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input bar */}
+        {/* Input bar or choice selector */}
         {isWaitingForUser && !isSubmitting && (
-          <InputBar
-            onSend={handleUserResponse}
-            onSkip={canSkip ? handleSkip : undefined}
-            canSkip={canSkip}
-            placeholder={
-              currentStep.field === "q3"
-                ? "Enter 1-5"
-                : currentStep.field === "consent"
-                  ? "Type 'yes' to consent"
-                  : "Type your answer..."
-            }
-            helper={currentStep.helper}
-            inputType={currentStep.field === "q3" ? "number" : "text"}
-          />
+          <>
+            {currentStep.field === "role" ? (
+              <div className="border-t border-af-lilac/20 bg-white/80 backdrop-blur-sm p-4">
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={() => handleUserResponse("student")}
+                    className="flex-1 max-w-xs px-6 py-4 rounded-xl bg-white border-2 border-af-lilac/30 hover:border-af-lilac hover:bg-af-lilac/10 text-af-ink font-semibold shadow-md hover:shadow-lg transition-all"
+                  >
+                    🎓 Student
+                  </button>
+                  <button
+                    onClick={() => handleUserResponse("leader")}
+                    className="flex-1 max-w-xs px-6 py-4 rounded-xl bg-white border-2 border-af-lilac/30 hover:border-af-lilac hover:bg-af-lilac/10 text-af-ink font-semibold shadow-md hover:shadow-lg transition-all"
+                  >
+                    ✨ Leader
+                  </button>
+                </div>
+              </div>
+            ) : currentStep.field === "q3" ? (
+              <RatingSlider onSubmit={(value) => handleUserResponse(String(value))} />
+            ) : (
+              <InputBar
+                onSend={handleUserResponse}
+                onSkip={canSkip ? handleSkip : undefined}
+                canSkip={canSkip}
+                placeholder={
+                  currentStep.field === "consent"
+                    ? "Type 'yes' to consent"
+                    : "Type your answer..."
+                }
+                helper={currentStep.helper}
+                inputType="text"
+              />
+            )}
+          </>
         )}
 
         {/* Continue button for bot messages that wait for continue */}
@@ -415,5 +440,77 @@ function getFieldLabel(field: keyof Answer): string {
     consent: "Consent to use your answers",
   };
   return labels[field] || field;
+}
+
+function RatingSlider({ onSubmit }: { onSubmit: (value: number) => void }) {
+  const [value, setValue] = useState(3);
+
+  const labels = [
+    "Not really",
+    "A bit",
+    "Comfortable",
+    "Very comfortable",
+    "Completely at ease"
+  ];
+
+  return (
+    <div className="border-t border-af-lilac/20 bg-white/80 backdrop-blur-sm p-6">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm text-af-ink/60">1</span>
+          <span className="text-xl font-bold text-af-ink">{value}</span>
+          <span className="text-sm text-af-ink/60">5</span>
+        </div>
+        
+        <input
+          type="range"
+          min="1"
+          max="5"
+          value={value}
+          onChange={(e) => setValue(Number(e.target.value))}
+          className="w-full h-2 bg-af-lilac/20 rounded-lg appearance-none cursor-pointer slider"
+          style={{
+            background: `linear-gradient(to right, rgb(219, 39, 119) 0%, rgb(147, 51, 234) ${((value - 1) / 4) * 100}%, rgb(243, 232, 255) ${((value - 1) / 4) * 100}%, rgb(243, 232, 255) 100%)`
+          }}
+        />
+        
+        <div className="text-center mt-3 mb-4">
+          <span className="text-sm font-medium text-af-ink/70">{labels[value - 1]}</span>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            onClick={() => onSubmit(value)}
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-af-pink to-af-lilac text-af-ink font-bold shadow-lg hover:shadow-xl transition-all"
+          >
+            Continue ✨
+          </button>
+        </div>
+      </div>
+
+      <style jsx>{`
+        .slider::-webkit-slider-thumb {
+          appearance: none;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid rgb(147, 51, 234);
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .slider::-moz-range-thumb {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: white;
+          border: 3px solid rgb(147, 51, 234);
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+      `}</style>
+    </div>
+  );
 }
 
