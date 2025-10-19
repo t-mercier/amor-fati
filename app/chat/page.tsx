@@ -48,6 +48,7 @@ export default function ChatPage() {
 
     // Start fresh conversation
     setTimeout(() => showBotMessage(0), 500);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Save draft to localStorage on changes
@@ -403,6 +404,7 @@ function getFieldLabel(field: keyof Answer): string {
     q6: "What should we keep?",
     q7: "What could we improve?",
     q8: "Other thoughts or ideas",
+    q9: "Anything else to add?",
     q9_name_contact: "Your name/contact (optional)",
     consent: "Consent to use your answers",
   };
