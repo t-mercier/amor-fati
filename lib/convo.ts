@@ -38,7 +38,7 @@ export const steps: Step[] = [
     text: `Hi! I'm your Amor Fati companion 🌷
 
 This is a light chat to look back on the dinner, what you felt, what you noticed, what you'd love for the future.
-Take your time; there's no right or wrong answer. Ready?`,
+Take your time; there's no right or wrong answer, and it is completely anonymous. Ready?`,
     waitForContinue: true,
   },
   {
