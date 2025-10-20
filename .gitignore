@@ -44,3 +44,7 @@ next-env.d.ts
 *.env
 .pnpm-store/*
 .pnpm-store
+pnpm-lock.yaml
+
+# Dev Container
+.devcontainer/
