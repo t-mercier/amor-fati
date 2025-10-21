@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       !a ||
       !a.role ||
       (a.role !== "student" && a.role !== "leader") ||
-      !a.q1 ||
+      a.q1 === undefined ||
       !a.q2 ||
       !a.q3 ||
       !a.q4 ||
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       answers: {
         role: a.role as "student" | "leader",
         q1: q3n,
-        q2: a.q2 ? String(a.q2) : "",
+        q2: String(a.q2),
         q3: String(a.q3),
         q4: String(a.q4),
         q5: String(a.q5),

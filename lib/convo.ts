@@ -8,13 +8,13 @@ export type StepId =
 
 export type Answer = {
   role?: "student" | "leader";
-  q1?: number; // 1..5 comfort rating
-  q2?: string; // what made you feel that way
-  q3?: string; // connection that stuck
-  q4?: string; // did it change anything
-  q5?: string; // community expectations
-  q6?: string; // future gatherings
-  q7?: string; // final thoughts
+  q1?: number; // 1..5 comfort rating (required)
+  q2?: string; // what made you feel that way (required)
+  q3?: string; // connection that stuck (required)
+  q4?: string; // did it change anything (required)
+  q5?: string; // community expectations (required)
+  q6?: string; // future gatherings (required)
+  q7?: string; // final thoughts (optional)
 };
 
 export interface Step {
@@ -65,9 +65,9 @@ Take your time; there's no right or wrong answer, and it is completely anonymous
   {
     id: "q2",
     role: "bot",
-    text: "What made you feel that way?",
+    text: "Can you tell me more about what made you feel that way? Was it the conversations, the setting, the people, or something else?",
   },
-  { id: "q2", role: "user", field: "q2" },
+  { id: "q2", role: "user", required: true, field: "q2" },
 
   {
     id: "q3",
@@ -135,6 +135,7 @@ export function getAnsweredRequiredCount(answers: Answer): number {
   let count = 0;
   if (answers.role) count++;
   if (answers.q1 !== undefined) count++;
+  if (answers.q2) count++;
   if (answers.q3) count++;
   if (answers.q4) count++;
   if (answers.q5) count++;
@@ -158,6 +159,8 @@ export function validateAnswers(answers: Answer): {
     answers.q1 > 5
   )
     errors.push("Q1 must be a number from 1 to 5");
+  if (!answers.q2 || answers.q2.trim().length === 0)
+    errors.push("Q2 is required");
   if (!answers.q3 || answers.q3.trim().length === 0)
     errors.push("Q3 is required");
   if (!answers.q4 || answers.q4.trim().length === 0)

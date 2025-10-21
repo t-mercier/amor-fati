@@ -4,7 +4,7 @@ export async function sendChatEmail(data: {
   answers: {
     role: "student" | "leader";
     q1: number;
-    q2?: string;
+    q2: string;
     q3: string;
     q4: string;
     q5: string;
