@@ -117,13 +117,6 @@ export default function ChatPage() {
         setSubmitError("Please enter a number from 1 to 5");
         return;
       }
-    } else if (step.field === "consent") {
-      parsedValue =
-        value.toLowerCase() === "yes" || value.toLowerCase() === "true";
-      if (!parsedValue) {
-        setSubmitError("Please type 'yes' to consent");
-        return;
-      }
     }
 
     setSubmitError(null);
@@ -385,11 +378,7 @@ export default function ChatPage() {
                 onSend={handleUserResponse}
                 onSkip={canSkip ? handleSkip : undefined}
                 canSkip={canSkip}
-                placeholder={
-                  currentStep.field === "consent"
-                    ? "Type 'yes' to consent"
-                    : "Type your answer..."
-                }
+                placeholder="Type your answer..."
                 helper={currentStep.helper}
                 inputType="text"
               />
@@ -436,9 +425,8 @@ function getFieldLabel(field: keyof Answer): string {
     q3_comment: "What made you feel that way",
     q4: "Did the evening change anything?",
     q5: "What would you love for next time?",
-    q6: "What do you hope to gain from this community?",
+    q6: "What would you love this community to bring you — personally, professionally, or emotionally?",
     q7: "Final thoughts",
-    consent: "Consent to use your answers",
   };
   return labels[field] || field;
 }

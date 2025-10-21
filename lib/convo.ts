@@ -4,7 +4,6 @@ export type StepId =
   | "q1" | "q2"
   | "q3" | "q3_comment"
   | "q4" | "q5" | "q6" | "q7"
-  | "consent"
   | "review"
   | "submit"
   | "done";
@@ -19,7 +18,6 @@ export type Answer = {
   q5?: string;
   q6?: string;
   q7?: string;
-  consent?: boolean; // required at submit
 };
 
 export interface Step {
@@ -117,19 +115,6 @@ Take your time; there's no right or wrong answer, and it is completely anonymous
   { id: "q7", role: "user", field: "q7" },
 
   {
-    id: "consent",
-    role: "bot",
-    text: "Do you consent to your answers being used (confidentially) to help us improve future Amor Fati gatherings?",
-  },
-  {
-    id: "consent",
-    role: "user",
-    required: true,
-    field: "consent",
-    helper: "Type 'yes' to consent",
-  },
-
-  {
     id: "review",
     role: "bot",
     text: "Here's a quick preview of what you've shared. You can edit any answer below, then press Submit when ready.",
@@ -165,7 +150,6 @@ export function getAnsweredRequiredCount(answers: Answer): number {
   if (answers.q4) count++;
   if (answers.q5) count++;
   if (answers.q6) count++;
-  if (answers.consent) count++;
   return count;
 }
 
@@ -195,7 +179,6 @@ export function validateAnswers(answers: Answer): {
     errors.push("Q5 is required");
   if (!answers.q6 || answers.q6.trim().length === 0)
     errors.push("Q6 is required");
-  if (answers.consent !== true) errors.push("Consent is required");
 
   return { valid: errors.length === 0, errors };
 }

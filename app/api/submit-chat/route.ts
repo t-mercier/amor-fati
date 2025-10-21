@@ -25,8 +25,7 @@ export async function POST(req: Request) {
       !a.q3 ||
       !a.q4 ||
       !a.q5 ||
-      !a.q6 ||
-      a.consent !== true
+      !a.q6
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -55,7 +54,6 @@ export async function POST(req: Request) {
         q5: String(a.q5),
         q6: String(a.q6),
         q7: a.q7 ? String(a.q7) : "",
-        consent: true,
       },
       transcript: transcript.map((m: any) => ({
         role: m.role === "user" ? "user" : "bot",
