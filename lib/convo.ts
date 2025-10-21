@@ -3,7 +3,7 @@ export type StepId =
   | "role_select"
   | "q1" | "q2"
   | "q3" | "q3_comment"
-  | "q4" | "q5" | "q6"
+  | "q4" | "q5" | "q6" | "q7"
   | "consent"
   | "review"
   | "submit"
@@ -18,6 +18,7 @@ export type Answer = {
   q4?: string;
   q5?: string;
   q6?: string;
+  q7?: string;
   consent?: boolean; // required at submit
 };
 
@@ -70,7 +71,7 @@ Take your time; there's no right or wrong answer, and it is completely anonymous
   {
     id: "q3",
     role: "bot",
-    text: "How did you feel in the space, the energy, the atmosphere, the people?\n\nIf you had to rate how comfortable you felt, from 1 (not really) to 5 (completely at ease), what would you say?",
+    text: "How did you feel in the space, the energy, the atmosphere, the people?\nIf you had to rate how comfortable you felt, from 1 (not really) to 5 (completely at ease), what would you say?",
   },
   {
     id: "q3",
@@ -97,16 +98,23 @@ Take your time; there's no right or wrong answer, and it is completely anonymous
   {
     id: "q5",
     role: "bot",
-    text: "If we organize another Amor Fati gathering, what kind of experience would you love next?\n\n(Could be another dinner, a workshop, a walk, something creative, anything you'd enjoy!)",
+    text: "If we organize another Amor Fati gathering, what kind of experience would you love next?\n(Could be another dinner, a workshop, a walk, something creative, anything you'd enjoy!)",
   },
   { id: "q5", role: "user", required: true, field: "q5" },
 
   {
     id: "q6",
     role: "bot",
+    text: "What do you hope to gain or get from being part of this community? What would make this sisterhood meaningful for you?",
+  },
+  { id: "q6", role: "user", required: true, field: "q6" },
+
+  {
+    id: "q7",
+    role: "bot",
     text: "Before we close, is there anything else you'd like to share, a wish, an idea, or just a last feeling about the evening?",
   },
-  { id: "q6", role: "user", field: "q6" },
+  { id: "q7", role: "user", field: "q7" },
 
   {
     id: "consent",
@@ -156,6 +164,7 @@ export function getAnsweredRequiredCount(answers: Answer): number {
   if (answers.q3) count++;
   if (answers.q4) count++;
   if (answers.q5) count++;
+  if (answers.q6) count++;
   if (answers.consent) count++;
   return count;
 }
@@ -184,6 +193,8 @@ export function validateAnswers(answers: Answer): {
     errors.push("Q4 is required");
   if (!answers.q5 || answers.q5.trim().length === 0)
     errors.push("Q5 is required");
+  if (!answers.q6 || answers.q6.trim().length === 0)
+    errors.push("Q6 is required");
   if (answers.consent !== true) errors.push("Consent is required");
 
   return { valid: errors.length === 0, errors };

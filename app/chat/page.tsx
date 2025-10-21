@@ -436,7 +436,8 @@ function getFieldLabel(field: keyof Answer): string {
     q3_comment: "What made you feel that way",
     q4: "Did the evening change anything?",
     q5: "What would you love for next time?",
-    q6: "Final thoughts",
+    q6: "What do you hope to gain from this community?",
+    q7: "Final thoughts",
     consent: "Consent to use your answers",
   };
   return labels[field] || field;

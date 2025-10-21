@@ -9,7 +9,8 @@ export async function sendChatEmail(data: {
     q3_comment?: string;
     q4: string;
     q5: string;
-    q6?: string;
+    q6: string;
+    q7?: string;
     consent: boolean;
   };
   transcript: { role: "bot" | "user"; text: string; step?: string }[];

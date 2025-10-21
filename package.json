@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Conversational chat interface for Amor Fati - Codam Sisterhood dinner reflection",
-  "author": "Timothée Mercier <timothee.mercier@tomtom.com>",
+  "author": "Timothée Mercier <timotheemercier.dev>",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
