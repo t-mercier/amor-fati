@@ -32,10 +32,10 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    const q3n = Number(a.q3);
+    const q3n = Number(a.q1);
     if (!Number.isInteger(q3n) || q3n < 1 || q3n > 5) {
       return NextResponse.json(
-        { error: "Invalid q3 value" },
+        { error: "Invalid q1 value" },
         { status: 400 }
       );
     }
@@ -46,10 +46,9 @@ export async function POST(req: Request) {
     await sendChatEmail({
       answers: {
         role: a.role as "student" | "leader",
-        q1: String(a.q1),
-        q2: String(a.q2),
-        q3: q3n,
-        q3_comment: a.q3_comment ? String(a.q3_comment) : "",
+        q1: q3n,
+        q2: a.q2 ? String(a.q2) : "",
+        q3: String(a.q3),
         q4: String(a.q4),
         q5: String(a.q5),
         q6: String(a.q6),

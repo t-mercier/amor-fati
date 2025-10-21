@@ -111,7 +111,7 @@ export default function ChatPage() {
         return;
       }
       parsedValue = normalized as "student" | "leader";
-    } else if (step.field === "q3") {
+    } else if (step.field === "q1") {
       parsedValue = parseInt(value, 10);
       if (isNaN(parsedValue) || parsedValue < 1 || parsedValue > 5) {
         setSubmitError("Please enter a number from 1 to 5");
@@ -371,7 +371,7 @@ export default function ChatPage() {
                   </button>
                 </div>
               </div>
-            ) : currentStep.field === "q3" ? (
+            ) : currentStep.field === "q1" ? (
               <RatingSlider onSubmit={(value) => handleUserResponse(String(value))} />
             ) : (
               <InputBar
@@ -419,13 +419,12 @@ export default function ChatPage() {
 function getFieldLabel(field: keyof Answer): string {
   const labels: Record<keyof Answer, string> = {
     role: "Role at Codam",
-    q1: "First moment or feeling",
-    q2: "Connection or story that stuck",
-    q3: "Comfort rating (1-5)",
-    q3_comment: "What made you feel that way",
+    q1: "Comfort rating (1-5)",
+    q2: "What made you feel that way",
+    q3: "Connection or story that stuck",
     q4: "Did the evening change anything?",
-    q5: "What would you love for next time?",
-    q6: "What would you love this community to bring you — personally, professionally, or emotionally?",
+    q5: "What do you hope to gain from this community?",
+    q6: "What would you love for next time?",
     q7: "Final thoughts",
   };
   return labels[field] || field;
