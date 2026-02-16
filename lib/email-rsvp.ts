@@ -1,5 +1,7 @@
 import { Resend } from "resend";
 
+type AttendanceChoice = "panel" | "diner" | "none";
+
 /**
  * Send an RSVP notification email to the team.
  *
@@ -9,7 +11,7 @@ import { Resend } from "resend";
  * configured in your deployment for this to work.
  */
 export async function sendRsvpEmail(data: {
-  willAttend: boolean;
+  attendanceChoices: AttendanceChoice[];
   diet: "veggie" | "fish";
   intolerances: string;
   /** Optional name of the respondent, if available */
@@ -22,11 +24,17 @@ export async function sendRsvpEmail(data: {
   const to = process.env.TEAM_EMAIL!;
   const from = process.env.FROM_EMAIL!;
 
-  const { willAttend, diet, intolerances, name, email, meta } = data;
-  const subject = willAttend
-    ? "Amor Fati RSVP – Coming to dinner"
-    : "Amor Fati RSVP – Not attending";
-  const attendText = willAttend ? "will be there" : "will not be there";
+  const { attendanceChoices, diet, intolerances, name, email, meta } = data;
+  const attendanceLabels: Record<AttendanceChoice, string> = {
+    panel: "The International Women's Day Panel",
+    diner: "The Diner",
+    none: "None",
+  };
+  const attendText =
+    attendanceChoices.map((choice) => attendanceLabels[choice]).join(", ") || "-";
+  const subject = attendanceChoices.includes("none")
+    ? "Amor Fati RSVP – Not attending"
+    : "Amor Fati RSVP – Attendance update";
 
   const html = `
     <div style="font-family:Inter,system-ui">
@@ -49,7 +57,7 @@ export async function sendRsvpEmail(data: {
     `UA: ${meta.ua ?? "-"}`,
     "",
     name ? `Name: ${name}` : undefined,
-    `Attendance: ${attendText}`,
+    `Attendance choices: ${attendText}`,
     `Diet: ${diet}`,
     `Intolerances: ${intolerances || "-"}`,
     email ? `Email: ${email}` : undefined,
