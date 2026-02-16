@@ -12,6 +12,8 @@ export async function sendRsvpEmail(data: {
   willAttend: boolean;
   diet: "veggie" | "fish";
   intolerances: string;
+  /** Optional name of the respondent, if available */
+  name?: string;
   /** Optional email of the respondent, if available */
   email?: string;
   meta: { submittedAt: string; ip?: string | null; ua?: string | null };
@@ -20,7 +22,7 @@ export async function sendRsvpEmail(data: {
   const to = process.env.TEAM_EMAIL!;
   const from = process.env.FROM_EMAIL!;
 
-  const { willAttend, diet, intolerances, email, meta } = data;
+  const { willAttend, diet, intolerances, name, email, meta } = data;
   const subject = willAttend
     ? "Amor Fati RSVP – Coming to dinner"
     : "Amor Fati RSVP – Not attending";
@@ -33,6 +35,7 @@ export async function sendRsvpEmail(data: {
          <b>IP:</b> ${meta.ip ?? "-"}<br/>
          <b>UA:</b> ${meta.ua ?? "-"}</p>
       <hr/>
+      ${name ? `<p><b>Name:</b> ${name}</p>` : ""}
       <p><b>Attendance:</b> ${attendText}</p>
       <p><b>Diet:</b> ${diet}</p>
       <p><b>Intolerances:</b> ${intolerances || "-"}</p>
@@ -45,6 +48,7 @@ export async function sendRsvpEmail(data: {
     `IP: ${meta.ip ?? "-"}`,
     `UA: ${meta.ua ?? "-"}`,
     "",
+    name ? `Name: ${name}` : undefined,
     `Attendance: ${attendText}`,
     `Diet: ${diet}`,
     `Intolerances: ${intolerances || "-"}`,

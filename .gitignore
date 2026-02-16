@@ -48,3 +48,10 @@ pnpm-lock.yaml
 
 # Dev Container
 .devcontainer/
+
+# RSVP exports (PII) - keep local only
+attendees.txt
+rsvp-links.csv
+
+# Office temporary files
+~$*
