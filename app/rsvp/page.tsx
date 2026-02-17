@@ -18,7 +18,7 @@ function RsvpPageContent() {
   const [attendanceChoices, setAttendanceChoices] = useState<AttendanceChoice[]>(
     []
   );
-  const [diet, setDiet] = useState<"veggie" | "fish">("veggie");
+  const [diet, setDiet] = useState<"meat" | "vegetarian" | "fish">("meat");
   const [intolerances, setIntolerances] = useState("");
   const [name, setName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -207,10 +207,13 @@ function RsvpPageContent() {
           <select
             className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
             value={diet}
-            onChange={(e) => setDiet(e.target.value as "veggie" | "fish")}
+            onChange={(e) =>
+              setDiet(e.target.value as "meat" | "vegetarian" | "fish")
+            }
           >
-            <option value="veggie">Veggie</option>
-            <option value="fish">Fish</option>
+            <option value="meat">Meat - Slow cooked top-side beef</option>
+            <option value="vegetarian">Vegetarian - Hispi Cabbage</option>
+            <option value="fish">Fish - Plaice Fillet</option>
           </select>
         </div>
 

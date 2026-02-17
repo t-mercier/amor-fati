@@ -12,7 +12,7 @@ type AttendanceChoice = "panel" | "diner" | "none";
  */
 export async function sendRsvpEmail(data: {
   attendanceChoices: AttendanceChoice[];
-  diet: "veggie" | "fish";
+  diet: "meat" | "vegetarian" | "fish";
   intolerances: string;
   /** Optional name of the respondent, if available */
   name?: string;
@@ -30,8 +30,14 @@ export async function sendRsvpEmail(data: {
     diner: "The Diner",
     none: "None",
   };
+  const dietLabels: Record<"meat" | "vegetarian" | "fish", string> = {
+    meat: "Meat - Slow cooked top-side beef",
+    vegetarian: "Vegetarian - Hispi Cabbage",
+    fish: "Fish - Plaice Fillet",
+  };
   const attendText =
     attendanceChoices.map((choice) => attendanceLabels[choice]).join(", ") || "-";
+  const dietText = dietLabels[diet];
   const subject = attendanceChoices.includes("none")
     ? "Amor Fati RSVP – Not attending"
     : "Amor Fati RSVP – Attendance update";
@@ -45,7 +51,7 @@ export async function sendRsvpEmail(data: {
       <hr/>
       ${name ? `<p><b>Name:</b> ${name}</p>` : ""}
       <p><b>Attendance:</b> ${attendText}</p>
-      <p><b>Diet:</b> ${diet}</p>
+      <p><b>Diet:</b> ${dietText}</p>
       <p><b>Intolerances:</b> ${intolerances || "-"}</p>
       ${email ? `<p><b>Email:</b> ${email}</p>` : ""}
     </div>`;
@@ -58,7 +64,7 @@ export async function sendRsvpEmail(data: {
     "",
     name ? `Name: ${name}` : undefined,
     `Attendance choices: ${attendText}`,
-    `Diet: ${diet}`,
+    `Diet: ${dietText}`,
     `Intolerances: ${intolerances || "-"}`,
     email ? `Email: ${email}` : undefined,
   ]

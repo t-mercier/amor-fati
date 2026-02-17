@@ -9,7 +9,7 @@ type AttendanceChoice = "panel" | "diner" | "none";
  *
  * Expects a JSON body with:
  *  - attendanceChoices: ("panel" | "diner" | "none")[]
- *  - diet: "veggie" | "fish"
+ *  - diet: "meat" | "vegetarian" | "fish"
  *  - intolerances: string
  *  - token?: string
  *  - email?: string
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { attendanceChoices, diet, intolerances, token, email, name } = body as {
       attendanceChoices: unknown;
-      diet: "veggie" | "fish";
+      diet: "meat" | "vegetarian" | "fish";
       intolerances: string;
       token?: string;
       email?: string;
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     };
 
     // Basic validation
-    if (diet !== "veggie" && diet !== "fish") {
+    if (diet !== "meat" && diet !== "vegetarian" && diet !== "fish") {
       return NextResponse.json({ error: "Invalid diet option" }, { status: 400 });
     }
     if (!Array.isArray(attendanceChoices)) {
