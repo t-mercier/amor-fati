@@ -51,7 +51,7 @@ export async function sendRsvpEmail(data: {
       <hr/>
       ${name ? `<p><b>Name:</b> ${name}</p>` : ""}
       <p><b>Attendance:</b> ${attendText}</p>
-      <p><b>Diet:</b> ${dietText}</p>
+      <p><b>Menu:</b> ${dietText}</p>
       <p><b>Intolerances:</b> ${intolerances || "-"}</p>
       ${email ? `<p><b>Email:</b> ${email}</p>` : ""}
     </div>`;
@@ -64,7 +64,7 @@ export async function sendRsvpEmail(data: {
     "",
     name ? `Name: ${name}` : undefined,
     `Attendance choices: ${attendText}`,
-    `Diet: ${dietText}`,
+    `Menu: ${dietText}`,
     `Intolerances: ${intolerances || "-"}`,
     email ? `Email: ${email}` : undefined,
   ]

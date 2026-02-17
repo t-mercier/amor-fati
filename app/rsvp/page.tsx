@@ -203,7 +203,7 @@ function RsvpPageContent() {
         </div>
 
         <div className="mb-6">
-          <p className="font-medium text-af-ink mb-2">Diet preference</p>
+          <p className="font-medium text-af-ink mb-2">Menu preference</p>
           <select
             className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
             value={diet}
