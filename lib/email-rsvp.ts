@@ -16,6 +16,8 @@ export async function sendRsvpEmail(data: {
   intolerances: string;
   /** Optional name of the respondent, if available */
   name?: string;
+  /** Optional 42 intra of the respondent, if available */
+  intra?: string;
   /** Optional email of the respondent, if available */
   email?: string;
   meta: { submittedAt: string; ip?: string | null; ua?: string | null };
@@ -24,7 +26,7 @@ export async function sendRsvpEmail(data: {
   const to = process.env.TEAM_EMAIL!;
   const from = process.env.FROM_EMAIL!;
 
-  const { attendanceChoices, diet, intolerances, name, email, meta } = data;
+  const { attendanceChoices, diet, intolerances, name, intra, email, meta } = data;
   const attendanceLabels: Record<AttendanceChoice, string> = {
     panel: "The International Women's Day Panel",
     diner: "The Diner",
@@ -49,6 +51,7 @@ export async function sendRsvpEmail(data: {
          <b>IP:</b> ${meta.ip ?? "-"}<br/>
          <b>UA:</b> ${meta.ua ?? "-"}</p>
       <hr/>
+      ${intra ? `<p><b>42 intra:</b> ${intra}</p>` : ""}
       ${name ? `<p><b>Name:</b> ${name}</p>` : ""}
       <p><b>Attendance:</b> ${attendText}</p>
       <p><b>Menu:</b> ${dietText}</p>
@@ -62,6 +65,7 @@ export async function sendRsvpEmail(data: {
     `IP: ${meta.ip ?? "-"}`,
     `UA: ${meta.ua ?? "-"}`,
     "",
+    intra ? `42 intra: ${intra}` : undefined,
     name ? `Name: ${name}` : undefined,
     `Attendance choices: ${attendText}`,
     `Menu: ${dietText}`,

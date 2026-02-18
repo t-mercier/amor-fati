@@ -14,6 +14,7 @@ type AttendanceChoice = "panel" | "diner" | "none";
  *  - token?: string
  *  - email?: string
  *  - name?: string
+ *  - intra?: string
  *
  * Returns a JSON object with success=true on success or an error message
  * otherwise. On submission, an email is sent to the TEAM_EMAIL address
@@ -22,13 +23,14 @@ type AttendanceChoice = "panel" | "diner" | "none";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { attendanceChoices, diet, intolerances, token, email, name } = body as {
+    const { attendanceChoices, diet, intolerances, token, email, name, intra } = body as {
       attendanceChoices: unknown;
       diet: "meat" | "vegetarian" | "fish";
       intolerances: string;
       token?: string;
       email?: string;
       name?: string;
+      intra?: string;
     };
 
     // Basic validation
@@ -81,9 +83,13 @@ export async function POST(req: Request) {
     const trimmedToken = typeof token === "string" ? token.trim() : "";
     const fallbackEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
     const normalizedName = typeof name === "string" ? name.trim() : "";
+    const normalizedIntra = typeof intra === "string" ? intra.trim() : "";
 
     if (normalizedName.length > 120) {
       return NextResponse.json({ error: "Name is too long" }, { status: 400 });
+    }
+    if (normalizedIntra.length > 120) {
+      return NextResponse.json({ error: "42 intra is too long" }, { status: 400 });
     }
     if (!normalizedName) {
       return NextResponse.json(
@@ -116,6 +122,7 @@ export async function POST(req: Request) {
       intolerances: intolerances ?? "",
       email: resolvedEmail,
       name: normalizedName || undefined,
+      intra: normalizedIntra || undefined,
       meta: { submittedAt, ip, ua },
     });
 
