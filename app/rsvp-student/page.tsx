@@ -1,82 +1,63 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
-type AttendanceChoice = "panel" | "diner" | "none";
+type AttendanceChoice = "diner" | "none";
+type ProfessionalStatus = "developer" | "internship" | "none";
 
 /**
  * Student RSVP page for Amor Fati dinner.
  *
- * This page mirrors the RSVP form and also collects the student's
- * 42 intra before submission.
+ * This page mirrors the RSVP form and collects student-specific details.
  */
-function RsvpStudentPageContent() {
-  const [attendanceChoices, setAttendanceChoices] = useState<AttendanceChoice[]>(
-    []
-  );
+export default function RsvpStudentPage() {
   const [diet, setDiet] = useState<"meat" | "vegetarian" | "fish">("meat");
   const [intolerances, setIntolerances] = useState("");
   const [intra, setIntra] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [cohort, setCohort] = useState("");
+  const [professionalStatus, setProfessionalStatus] =
+    useState<ProfessionalStatus | "">("");
+  const [professionalDuration, setProfessionalDuration] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const searchParams = useSearchParams();
-  const token = searchParams.get("t") ?? "";
-  const legacyEmail = searchParams.get("email") ?? "";
-  const hasToken = Boolean(token);
-
-  const toggleAttendanceChoice = (choice: AttendanceChoice) => {
-    setAttendanceChoices((previous) => {
-      if (choice === "none") {
-        return previous.includes("none") ? [] : ["none"];
-      }
-
-      const withoutNone = previous.filter((item) => item !== "none");
-      if (withoutNone.includes(choice)) {
-        return withoutNone.filter((item) => item !== choice);
-      }
-
-      if (withoutNone.length >= 2) {
-        return withoutNone;
-      }
-
-      return [...withoutNone, choice];
-    });
-  };
-
-  const isChoiceDisabled = (choice: AttendanceChoice): boolean => {
-    if (choice === "none") {
-      return attendanceChoices.length === 2;
-    }
-
-    if (attendanceChoices.includes("none")) {
-      return true;
-    }
-
-    return attendanceChoices.length >= 2 && !attendanceChoices.includes(choice);
-  };
+  const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmedIntra = intra.trim();
-    const trimmedName = name.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedProfessionalDuration = professionalDuration.trim();
 
     if (!trimmedIntra) {
       setError("Please enter your 42 intra");
       return;
     }
 
-    if (!trimmedName) {
-      setError("Please enter your name");
+    if (!isValidEmail(trimmedEmail)) {
+      setError("Please enter a valid email address");
       return;
     }
 
-    if (attendanceChoices.length === 0) {
-      setError("Please select at least one attendance option");
+    if (!cohort) {
+      setError("Please select your cohort");
+      return;
+    }
+
+    if (!professionalStatus) {
+      setError("Please select your professional status");
+      return;
+    }
+
+    if (
+      (professionalStatus === "developer" ||
+        professionalStatus === "internship") &&
+      !trimmedProfessionalDuration
+    ) {
+      setError("Please tell us since how long");
       return;
     }
 
@@ -88,13 +69,14 @@ function RsvpStudentPageContent() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          attendanceChoices,
+          attendanceChoices: ["diner"],
           diet,
           intolerances,
           intra: trimmedIntra,
-          token,
-          email: hasToken ? legacyEmail : undefined,
-          name: trimmedName || undefined,
+          email: trimmedEmail,
+          cohort,
+          professionalStatus,
+          professionalDuration: trimmedProfessionalDuration || undefined,
         }),
       });
 
@@ -131,7 +113,7 @@ function RsvpStudentPageContent() {
         className="max-w-lg w-full bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-af-lilac/20"
       >
         <h1 className="text-2xl font-bold mb-6 text-af-ink">
-          RSVP for Amor Fati Dinner
+          RSVP for Amor Fati Dinner (Students)
         </h1>
 
         <div className="mb-6 rounded-xl border border-af-lilac/30 bg-af-lilac/10 p-4 text-af-ink">
@@ -140,91 +122,86 @@ function RsvpStudentPageContent() {
           <p>🕔 19:30 – 21:00</p>
         </div>
 
-        {hasToken ? (
-          <div className="mb-6 rounded-xl border border-af-lilac/20 bg-white p-3 text-sm text-af-ink/90">
-            This RSVP link is personal. Your email is attached automatically.
-          </div>
-        ) : (
-          <div className="mb-6 rounded-xl border border-af-lilac/20 bg-white p-3 text-sm text-af-ink/90">
-            Please fill your 42 intra and name to submit your RSVP.
-          </div>
-        )}
+        <div className="mb-6 rounded-xl border border-af-lilac/20 bg-white p-3 text-sm text-af-ink/90">
+          Please fill your 42 intra and email to submit your RSVP.
+        </div>
 
         <div className="mb-6">
           <p className="font-medium text-af-ink mb-2">42 intra</p>
           <input
             type="text"
             className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
-            placeholder="your.login"
+            placeholder="your Codam intra (e.g. jdoe)"
             value={intra}
             onChange={(e) => setIntra(e.target.value)}
           />
         </div>
 
         <div className="mb-6">
-          <p className="font-medium text-af-ink mb-2">Your name</p>
+          <p className="font-medium text-af-ink mb-2">Your email</p>
           <input
-            type="text"
+            type="email"
             className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
-            placeholder="First and last name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="your.email@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
         <div className="mb-6">
-          <p className="font-medium text-af-ink mb-2">I will attend:</p>
-          <div className="flex flex-col gap-3">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="attendance-panel"
-                value="panel"
-                checked={attendanceChoices.includes("panel")}
-                onChange={() => toggleAttendanceChoice("panel")}
-                disabled={isChoiceDisabled("panel")}
-                className="h-5 w-5 text-af-lilac focus:ring-af-lilac border-af-lilac/30"
-              />
-              <span className="text-af-ink">
-                The International Women&apos;s Day Panel
-              </span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="attendance-diner"
-                value="diner"
-                checked={attendanceChoices.includes("diner")}
-                onChange={() => toggleAttendanceChoice("diner")}
-                disabled={isChoiceDisabled("diner")}
-                className="h-5 w-5 text-af-lilac focus:ring-af-lilac border-af-lilac/30"
-              />
-              <span className="text-af-ink">The Diner</span>
-            </label>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="attendance-none"
-                value="none"
-                checked={attendanceChoices.includes("none")}
-                onChange={() => toggleAttendanceChoice("none")}
-                disabled={isChoiceDisabled("none")}
-                className="h-5 w-5 text-af-lilac focus:ring-af-lilac border-af-lilac/30"
-              />
-              <span className="text-af-ink">None</span>
-            </label>
-          </div>
-          <p className="mt-2 text-xs text-af-ink/70">You can select up to 2 options.</p>
+          <p className="font-medium text-af-ink mb-2">Cohort</p>
+          <select
+            className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
+            value={cohort}
+            onChange={(e) => setCohort(e.target.value)}
+          >
+            <option value="">Select your cohort</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+          </select>
         </div>
+
+        <div className="mb-6">
+          <p className="font-medium text-af-ink mb-2">Professional status</p>
+          <select
+            className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
+            value={professionalStatus}
+            onChange={(e) => setProfessionalStatus(e.target.value as ProfessionalStatus | "")}
+          >
+            <option value="">Select one</option>
+            <option value="developer">I already work as a developer</option>
+            <option value="internship">I started an internship</option>
+            <option value="none">Not yet</option>
+          </select>
+        </div>
+
+        {(professionalStatus === "developer" ||
+          professionalStatus === "internship") && (
+          <div className="mb-6">
+            <p className="font-medium text-af-ink mb-2">Since how long?</p>
+            <input
+              type="text"
+              className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
+              placeholder="e.g. 6 months"
+              value={professionalDuration}
+              onChange={(e) => setProfessionalDuration(e.target.value)}
+            />
+          </div>
+        )}
 
         <div className="mb-6">
           <p className="font-medium text-af-ink mb-2">Menu preference</p>
           <select
             className="w-full p-3 rounded-lg border border-af-lilac/30 bg-white text-af-ink"
             value={diet}
-            onChange={(e) =>
-              setDiet(e.target.value as "meat" | "vegetarian" | "fish")
-            }
+            onChange={(e) => setDiet(e.target.value as "meat" | "vegetarian" | "fish")}
           >
             <option value="meat">Meat - Slow cooked top-side beef</option>
             <option value="vegetarian">Vegetarian - Hispi Cabbage</option>
@@ -258,21 +235,5 @@ function RsvpStudentPageContent() {
         </button>
       </form>
     </div>
-  );
-}
-
-export default function RsvpStudentPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-af-lilac/10 p-6">
-          <div className="max-w-lg w-full bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-af-lilac/20 text-center">
-            <p className="text-af-ink">Loading RSVP form...</p>
-          </div>
-        </div>
-      }
-    >
-      <RsvpStudentPageContent />
-    </Suspense>
   );
 }

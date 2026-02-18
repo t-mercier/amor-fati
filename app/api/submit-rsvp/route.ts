@@ -3,6 +3,11 @@ import { sendRsvpEmail } from "@/lib/email-rsvp";
 import { resolveRsvpToken } from "@/lib/rsvp-token";
 
 type AttendanceChoice = "panel" | "diner" | "none";
+type ProfessionalStatus = "developer" | "internship" | "none";
+
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
 
 /**
  * API route to handle dinner RSVP submissions.
@@ -15,6 +20,9 @@ type AttendanceChoice = "panel" | "diner" | "none";
  *  - email?: string
  *  - name?: string
  *  - intra?: string
+ *  - cohort?: string | number
+ *  - professionalStatus?: "developer" | "internship" | "none"
+ *  - professionalDuration?: string
  *
  * Returns a JSON object with success=true on success or an error message
  * otherwise. On submission, an email is sent to the TEAM_EMAIL address
@@ -23,7 +31,18 @@ type AttendanceChoice = "panel" | "diner" | "none";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { attendanceChoices, diet, intolerances, token, email, name, intra } = body as {
+    const {
+      attendanceChoices,
+      diet,
+      intolerances,
+      token,
+      email,
+      name,
+      intra,
+      cohort,
+      professionalStatus,
+      professionalDuration,
+    } = body as {
       attendanceChoices: unknown;
       diet: "meat" | "vegetarian" | "fish";
       intolerances: string;
@@ -31,6 +50,9 @@ export async function POST(req: Request) {
       email?: string;
       name?: string;
       intra?: string;
+      cohort?: unknown;
+      professionalStatus?: unknown;
+      professionalDuration?: unknown;
     };
 
     // Basic validation
@@ -84,6 +106,20 @@ export async function POST(req: Request) {
     const fallbackEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
     const normalizedName = typeof name === "string" ? name.trim() : "";
     const normalizedIntra = typeof intra === "string" ? intra.trim() : "";
+    const normalizedCohortRaw =
+      typeof cohort === "string"
+        ? cohort.trim()
+        : typeof cohort === "number"
+          ? String(cohort)
+          : "";
+    const parsedCohort = normalizedCohortRaw ? Number(normalizedCohortRaw) : null;
+    const isValidCohortInteger =
+      parsedCohort !== null && Number.isInteger(parsedCohort);
+    const normalizedCohort = isValidCohortInteger ? String(parsedCohort) : "";
+    const normalizedProfessionalDuration =
+      typeof professionalDuration === "string"
+        ? professionalDuration.trim()
+        : "";
 
     if (normalizedName.length > 120) {
       return NextResponse.json({ error: "Name is too long" }, { status: 400 });
@@ -91,9 +127,64 @@ export async function POST(req: Request) {
     if (normalizedIntra.length > 120) {
       return NextResponse.json({ error: "42 intra is too long" }, { status: 400 });
     }
-    if (!normalizedName) {
+    if (
+      normalizedCohortRaw &&
+      (!isValidCohortInteger || parsedCohort < 2018 || parsedCohort > 2026)
+    ) {
       return NextResponse.json(
-        { error: "Please provide your name" },
+        { error: "Cohort must be between 2018 and 2026" },
+        { status: 400 }
+      );
+    }
+    if (normalizedProfessionalDuration.length > 120) {
+      return NextResponse.json(
+        { error: "Professional duration is too long" },
+        { status: 400 }
+      );
+    }
+    if (!trimmedToken && fallbackEmail && !isValidEmail(fallbackEmail)) {
+      return NextResponse.json(
+        { error: "Please provide a valid email address" },
+        { status: 400 }
+      );
+    }
+    if (
+      professionalStatus !== undefined &&
+      professionalStatus !== "developer" &&
+      professionalStatus !== "internship" &&
+      professionalStatus !== "none"
+    ) {
+      return NextResponse.json(
+        { error: "Invalid professional status" },
+        { status: 400 }
+      );
+    }
+    const normalizedProfessionalStatus = professionalStatus as
+      | ProfessionalStatus
+      | undefined;
+    if (
+      (normalizedProfessionalStatus === "developer" ||
+        normalizedProfessionalStatus === "internship") &&
+      !normalizedProfessionalDuration
+    ) {
+      return NextResponse.json(
+        { error: "Please provide professional duration" },
+        { status: 400 }
+      );
+    }
+    if (
+      normalizedProfessionalStatus === "none" &&
+      normalizedProfessionalDuration
+    ) {
+      return NextResponse.json(
+        { error: "Professional duration should be empty for 'none'" },
+        { status: 400 }
+      );
+    }
+
+    if (!normalizedName && !normalizedIntra && !fallbackEmail && !trimmedToken) {
+      return NextResponse.json(
+        { error: "Please provide your name, 42 intra, or email" },
         { status: 400 }
       );
     }
@@ -116,15 +207,27 @@ export async function POST(req: Request) {
     const ua = req.headers.get("user-agent") ?? null;
     const submittedAt = new Date().toISOString();
 
-    await sendRsvpEmail({
-      attendanceChoices: normalizedAttendanceChoices,
-      diet,
-      intolerances: intolerances ?? "",
-      email: resolvedEmail,
-      name: normalizedName || undefined,
-      intra: normalizedIntra || undefined,
-      meta: { submittedAt, ip, ua },
-    });
+    try {
+      await sendRsvpEmail({
+        attendanceChoices: normalizedAttendanceChoices,
+        diet,
+        intolerances: intolerances ?? "",
+        email: resolvedEmail,
+        name: normalizedName || undefined,
+        intra: normalizedIntra || undefined,
+        cohort: normalizedCohort || undefined,
+        professionalStatus: normalizedProfessionalStatus,
+        professionalDuration: normalizedProfessionalDuration || undefined,
+        meta: { submittedAt, ip, ua },
+      });
+    } catch (err) {
+      // Keep localhost testing unblocked when email provider config is incomplete.
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Failed to send RSVP email in development mode:", err);
+      } else {
+        throw err;
+      }
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {
